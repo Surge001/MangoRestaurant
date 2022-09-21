@@ -25,7 +25,7 @@ namespace Mango.Services.ProductApi.Controllers
                 IEnumerable<ProductDto> result = await this.productRepository.GetProducts();
                 this.response.Result = result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.response.IsSuccess = false;
                 this.response.ErrorMessages = new List<string>() { ex.Message + Environment.NewLine + ex.StackTrace };
@@ -46,6 +46,53 @@ namespace Mango.Services.ProductApi.Controllers
             {
                 this.response.IsSuccess = false;
                 this.response.ErrorMessages = new List<string>() { ex.Message + Environment.NewLine + ex.StackTrace };
+            }
+            return this.response;
+        }
+
+        [HttpPost]
+        public async Task<object> Post([FromBody] ProductDto productDto)
+        {
+            try
+            {
+                ProductDto product = await this.productRepository.CreateUpdateProducct(productDto);
+                this.response.Result = product;
+            }
+            catch (Exception ex)
+            {
+                this.response.IsSuccess = false;
+                this.response.ErrorMessages = new List<string>() { ex.Message };
+            }
+            return this.response;
+        }
+
+        [HttpPut]
+        public async Task<object> Put([FromBody] ProductDto productDto)
+        {
+            try
+            {
+                ProductDto product = await this.productRepository.CreateUpdateProducct(productDto);
+                this.response.Result = product;
+            }
+            catch (Exception ex)
+            {
+                this.response.IsSuccess = false;
+                this.response.ErrorMessages = new List<string>() { ex.Message };
+            }
+            return this.response;
+        }
+
+        [HttpDelete]
+        public async Task<object> Delete(int productId)
+        {
+            try
+            {
+                this.response.IsSuccess = await this.productRepository.DeleteProduct(productId);
+            }
+            catch (Exception ex)
+            {
+                this.response.IsSuccess = false;
+                this.response.ErrorMessages = new List<string>() { ex.Message };
             }
             return this.response;
         }
