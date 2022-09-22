@@ -1,7 +1,15 @@
+using Mango.Web;
+using Mango.Web.Services;
+using Mango.Web.Services.IServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpClient<IProductService, ProductService>(); //<- configures HttpClientFactory on product service
+SD.ProductApiBase = builder.Configuration["ServiceUrl:ProductApi"];//<- Assigns product API base url
+builder.Services.AddScoped<IProductService, ProductService>();     //<- Configures dep injection for product service
 
 var app = builder.Build();
 
