@@ -34,7 +34,7 @@ namespace Mango.Web.Services
                 httpClient.DefaultRequestHeaders.Clear();
                 if (request.Data != null)
                 {
-                    using StringContent content = new StringContent(JsonConvert.SerializeObject(request.Data), Encoding.UTF8, "application/json");
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(request.Data), Encoding.UTF8, "application/json");
                     requestMessage.Content = content;
                 }
                 switch (request.ApiType)
