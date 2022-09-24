@@ -11,6 +11,25 @@ builder.Services.AddHttpClient<IProductService, ProductService>(); //<- configur
 SD.ProductApiBase = builder.Configuration["ServiceUrl:ProductApi"];//<- Assigns product API base url
 builder.Services.AddScoped<IProductService, ProductService>();     //<- Configures dep injection for product service
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+})
+    .AddCookie("Cookies", config => config.ExpireTimeSpan = TimeSpan.FromMinutes(10))
+    .AddOpenIdConnect("oidc", options =>
+    {
+        options.Authority = builder.Configuration["ServiceUrl:IdentityApi"];
+        options.GetClaimsFromUserInfoEndpoint = true;
+        options.ClientId = "mango"; //<= comes from SD file in Identity API
+        options.ClientSecret = "secretkey";//<= comes from SD file in Identity API
+        options.ResponseType = "code";//<= comes from SD file in Identity API
+        options.TokenValidationParameters.NameClaimType = "name";
+        options.TokenValidationParameters.RoleClaimType = "role";
+        options.Scope.Add("mango"); //<= comes from SD file in Identity API
+        options.SaveTokens = true;
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,6 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
