@@ -25,7 +25,7 @@ namespace Mango.Web.Controllers
         }
         public IActionResult Logout()
         {
-            return SignOut("cookies", "iodc");
+            return SignOut("Cookies", "oidc");
         }
 
         public IActionResult Privacy()
