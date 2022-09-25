@@ -1,7 +1,9 @@
+using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
 using Mango.Services.Identity;
 using Mango.Services.Identity.DbContexts;
 using Mango.Services.Identity.Initializer;
+using Mango.Services.Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
@@ -39,6 +41,7 @@ builder.Services.AddIdentityServer(options =>
 // Add DI for DbInitializer which seeds database with identity tables and
 // creates two default users automatically: admin and regular customer.
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddControllersWithViews();
 var app = builder.Build();

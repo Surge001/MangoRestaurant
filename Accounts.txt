@@ -1,0 +1,18 @@
+
+
+  
+  
+  Mango Restaurant:
+  admin1@gmail.com
+  Admin123*
+  
+  customer1@gmail.com
+  Customer123*
+  
+  testAdmin@gmail.com
+  Testadmin123*
+  
+  TestCustomer@gmail.com
+  Testcustomer123*
+  
+  
