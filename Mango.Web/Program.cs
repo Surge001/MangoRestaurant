@@ -11,6 +11,8 @@ builder.Services.AddHttpClient<IProductService, ProductService>(); //<- configur
 SD.ProductApiBase = builder.Configuration["ServiceUrl:ProductApi"];//<- Assigns product API base url
 builder.Services.AddScoped<IProductService, ProductService>();     //<- Configures dep injection for product service
 
+
+/******************* Security Authentication setup: ******************************/
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Cookies";
@@ -29,6 +31,8 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add("mango"); //<= comes from SD file in Identity API
         options.SaveTokens = true;
     });
+/************** end of authentication setup ********************************/
+
 
 var app = builder.Build();
 
