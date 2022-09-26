@@ -4,6 +4,10 @@ namespace Mango.Web.Models.Dto
 {
     public class ProductDto
     {
+        public ProductDto()
+        {
+            this.Count = 1;
+        }
         /// <summary>
         /// Primary key of Product table
         /// </summary>
@@ -22,5 +26,8 @@ namespace Mango.Web.Models.Dto
         public string CategoryName { get; set; }
 
         public string ImageUrl { get; set; }
+
+        [Range(1,100)]
+        public int Count { get; set; }
     }
 }

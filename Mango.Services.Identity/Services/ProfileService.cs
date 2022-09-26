@@ -28,7 +28,7 @@ namespace Mango.Services.Identity.Services
             ClaimsPrincipal principal = await this.userClaimsPrincipal.CreateAsync(user); //<= created from database
 
             List<Claim> claims = principal.Claims.ToList(); //<= Claims for user from database
-            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList(); //<= database claims which match from request
+            //claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList(); //<= database claims which match from request
 
             if (this.userManager.SupportsUserRole)
             {
