@@ -1,6 +1,7 @@
 using Mango.Web;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,10 @@ builder.Services.AddAuthentication(options =>
         options.ClientId = "mango"; //<= comes from SD file in Identity API
         options.ClientSecret = "secretkey";//<= comes from SD file in Identity API
         options.ResponseType = "code";//<= comes from SD file in Identity API
+
+        options.ClaimActions.MapJsonKey("role", "role", "role");
+        options.ClaimActions.MapJsonKey("sub", "sub", "sub");
+
         options.TokenValidationParameters.NameClaimType = "name";
         options.TokenValidationParameters.RoleClaimType = "role";
         options.Scope.Add("mango"); //<= comes from SD file in Identity API
