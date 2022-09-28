@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Mango.Services.ShoppingCartApi;
+using Mango.Services.ShoppingCartApi.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-//builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 
 builder.Services.AddControllers();
