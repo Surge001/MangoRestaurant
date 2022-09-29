@@ -44,6 +44,14 @@ namespace Mango.Web.Controllers
             return View(products);
         }
 
+        [HttpPost]
+        [Authorize]
+        [ActionName("Details")]
+        public async Task<IActionResult> Details(ProductDto productDto)
+        {
+            return View();
+        }
+
         [Authorize]
         public async Task<IActionResult> Login()
         {

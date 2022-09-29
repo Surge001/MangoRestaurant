@@ -9,8 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient<IProductService, ProductService>(); //<- configures HttpClientFactory on product service
-SD.ProductApiBase = builder.Configuration["ServiceUrl:ProductApi"];//<- Assigns product API base url
 builder.Services.AddScoped<IProductService, ProductService>();     //<- Configures dep injection for product service
+builder.Services.AddHttpClient<ICartService, CartService>(); // <= Adds HttpClient for DI on CartService constructor.
+builder.Services.AddScoped<ICartService, CartService>(); // <= Adds HttpClient for DI on CartService constructor.
+SD.ProductApiBase = builder.Configuration["ServiceUrl:ProductApi"];//<- Assigns product API base url
+SD.CartApiBase = builder.Configuration["ServiceUrl:CartApi"]; //<= Assigns Cart API base url
 
 
 /******************* Security Authentication setup: ******************************/

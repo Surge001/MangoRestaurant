@@ -20,12 +20,12 @@ namespace Mango.Services.ShoppingCartApi.Controllers
             this.responseDto = new();
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("Get/{userId}")]
         public async Task<object> Get(string userId)
         {
             try
             {
-               CartDto result = await this.cartRepository.GetByUserId(userId);
+                CartDto result = await this.cartRepository.GetByUserId(userId);
                 this.responseDto.Result = result;
             }
             catch (Exception error)
@@ -37,7 +37,7 @@ namespace Mango.Services.ShoppingCartApi.Controllers
             return this.responseDto;
         }
 
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<object> Add(CartDto cartDto)
         {
             try
@@ -54,7 +54,7 @@ namespace Mango.Services.ShoppingCartApi.Controllers
             return this.responseDto;
         }
 
-        [HttpPost]
+        [HttpPut("Update")]
         public async Task<object> Update(CartDto cartDto)
         {
             try
@@ -73,7 +73,7 @@ namespace Mango.Services.ShoppingCartApi.Controllers
 
 
 
-        [HttpPost]
+        [HttpPost("Remove")]
         public async Task<object> Remove([FromBody] int cartDetailsId)
         {
             try
