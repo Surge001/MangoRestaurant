@@ -49,7 +49,7 @@ namespace Mango.Services.ShoppingCartApi.Repository
             var headerFromDb = await this.dbContext.CartHeaders.AsNoTracking().FirstOrDefaultAsync(i => i.UserId == cartDto.CartHeader.UserId);
             if (headerFromDb == null)
             {
-                this.dbContext.CartHeaders.Add(headerFromDb);
+                this.dbContext.CartHeaders.Add(cart.CartHeader);
                 await this.dbContext.SaveChangesAsync();
                 cart.CartDetails.FirstOrDefault().CartHeaderId = cart.CartHeader.CartHeaderId;
                 cart.CartDetails.FirstOrDefault().Product = null;
