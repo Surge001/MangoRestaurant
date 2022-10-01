@@ -10,11 +10,16 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient<IProductService, ProductService>(); //<- configures HttpClientFactory on product service
 builder.Services.AddScoped<IProductService, ProductService>();     //<- Configures dep injection for product service
+
 builder.Services.AddHttpClient<ICartService, CartService>(); // <= Adds HttpClient for DI on CartService constructor.
 builder.Services.AddScoped<ICartService, CartService>(); // <= Adds HttpClient for DI on CartService constructor.
+
+builder.Services.AddHttpClient<ICouponService, CouponService>(); // <= Adds HttpClient for DI on CartService constructor.
+builder.Services.AddScoped<ICouponService, CouponService>(); // <= Adds HttpClient for DI on CartService constructor.
+
 SD.ProductApiBase = builder.Configuration["ServiceUrl:ProductApi"];//<- Assigns product API base url
 SD.CartApiBase = builder.Configuration["ServiceUrl:CartApi"]; //<= Assigns Cart API base url
-
+SD.CouponApiBase = builder.Configuration["ServiceUrl:CouponApi"]; //<= Assigns Coupon API base url;
 
 /******************* Security Authentication setup: ******************************/
 builder.Services.AddAuthentication(options =>
