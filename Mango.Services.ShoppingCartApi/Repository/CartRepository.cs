@@ -2,6 +2,7 @@
 using Mango.Services.ShoppingCartApi.DbContexts;
 using Mango.Services.ShoppingCartApi.Model;
 using Mango.Services.ShoppingCartApi.Model.Dto;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -19,6 +20,20 @@ namespace Mango.Services.ShoppingCartApi.Repository
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
+
+        public async Task<bool> ApplyCoupon(string userId, string couponCode)
+        {
+            CartHeader header = await this.dbContext.CartHeaders.FirstOrDefaultAsync(i => i.UserId == userId);
+            if (header != null && header.CartHeaderId > 0)
+            {
+                header.CouponCode = couponCode;
+                this.dbContext.CartHeaders.Update(header);
+                await this.dbContext.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> ClearCart(string userId)
         {
             var cartHeaderFromDb = await this.dbContext.CartHeaders.FirstOrDefaultAsync(i => i.UserId == userId);
@@ -30,7 +45,8 @@ namespace Mango.Services.ShoppingCartApi.Repository
                 this.dbContext.CartHeaders.Remove(cartHeaderFromDb);
                 await this.dbContext.SaveChangesAsync();
                 return true;
-            }else
+            }
+            else
             {
                 return false;
             }
@@ -100,6 +116,19 @@ namespace Mango.Services.ShoppingCartApi.Repository
             return this.mapper.Map<CartDto>(cart);
         }
 
+        public async Task<bool> RemoveCoupon(string userId)
+        {
+            CartHeader header = await this.dbContext.CartHeaders.FirstOrDefaultAsync(i => i.UserId == userId);
+            if (header != null && header.CartHeaderId > 0)
+            {
+                header.CouponCode = null;
+                this.dbContext.CartHeaders.Update(header);
+                await this.dbContext.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> RemoveFromCart(int cartDetailsId)
         {
             try
@@ -119,7 +148,7 @@ namespace Mango.Services.ShoppingCartApi.Repository
                 await this.dbContext.SaveChangesAsync();
                 return true;
             }
-            catch(Exception error)
+            catch (Exception error)
             {
                 // Log the error;
                 return false;
