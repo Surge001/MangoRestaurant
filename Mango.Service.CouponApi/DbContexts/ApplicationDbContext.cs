@@ -1,4 +1,5 @@
 ﻿
+using Mango.Service.CouponApi.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mango.Services.CouponApi.DbContexts
@@ -16,10 +17,10 @@ namespace Mango.Services.CouponApi.DbContexts
 
         #endregion
 
-        ///// <summary>
-        ///// Gets or sets Products
-        ///// </summary>
-        //public DbSet<Product> Products { get; set; }
+        /// <summary>
+        /// Gets or sets Products
+        /// </summary>
+        public DbSet<Coupon> Coupons { get; set; }
         //public DbSet<CartHeader> CartHeaders { get; set; }
         //public DbSet<CartDetails> CartDetails { get; set; }
 
@@ -27,6 +28,20 @@ namespace Mango.Services.CouponApi.DbContexts
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Coupon>().HasData(
+                new Coupon()
+                {
+                    CouponId = 1,
+                    CouponCode = "10OFF",
+                    DiscountAmount = 10
+                });
+            modelBuilder.Entity<Coupon>().HasData(
+                new Coupon()
+                {
+                    CouponId = 2,
+                    CouponCode = "20OFF",
+                    DiscountAmount = 20
+                });
         }
     }
 }
