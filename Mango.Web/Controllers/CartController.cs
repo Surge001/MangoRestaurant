@@ -75,6 +75,11 @@ namespace Mango.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Checkout()
+        {
+            return View(await LoadCartDtoForUser());
+        }
 
         #region Private Methods
 
