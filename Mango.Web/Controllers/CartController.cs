@@ -75,10 +75,31 @@ namespace Mango.Web.Controllers
             return View();
         }
 
-        [HttpGet]
+        
         public async Task<IActionResult> Checkout()
         {
             return View(await LoadCartDtoForUser());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CartDto cartDto)
+        {
+            try
+            {   
+                string accessToken = await this.HttpContext.GetTokenAsync("access_token");
+                ResponseDto response = await this.cartService.CartCheckout<ResponseDto>(cartDto.CartHeader, accessToken);
+
+                return RedirectToAction(nameof(Confirmation));
+            }
+            catch (Exception error)
+            {
+                return View(cartDto);
+            }
+        }
+
+        public async Task<IActionResult> Confirmation()
+        {
+            return View(LoadCartDtoForUser());
         }
 
         #region Private Methods

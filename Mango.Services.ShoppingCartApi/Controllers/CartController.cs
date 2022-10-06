@@ -1,4 +1,6 @@
-﻿using Mango.Services.ShoppingCartApi.Model.Dto;
+﻿using Mango.MessageBus;
+using Mango.Services.ShoppingCartApi.Messages;
+using Mango.Services.ShoppingCartApi.Model.Dto;
 using Mango.Services.ShoppingCartApi.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,13 +14,29 @@ namespace Mango.Services.ShoppingCartApi.Controllers
     [Route("api/cart")]
     public class CartController : Controller
     {
+        #region Private Fields
+
         private readonly ICartRepository cartRepository;
+        private readonly IMessageBus messageBus;
         protected ResponseDto responseDto;
-        public CartController(ICartRepository cartRepository)
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CartController"/> class.
+        /// </summary>
+        /// <param name="cartRepository">Repository instance</param>
+        /// <param name="messageBus">Message Bus instance</param>
+        public CartController(ICartRepository cartRepository, IMessageBus messageBus)
         {
             this.cartRepository = cartRepository;
+            this.messageBus = messageBus;
             this.responseDto = new();
         }
+
+        #endregion
 
         [HttpGet("Get/{userId}")]
         public async Task<object> Get(string userId)
@@ -115,6 +133,33 @@ namespace Mango.Services.ShoppingCartApi.Controllers
             {
                 bool result = await this.cartRepository.RemoveCoupon(userId);
                 this.responseDto.Result = result;
+            }
+            catch (Exception error)
+            {
+                this.responseDto.IsSuccess = false;
+                this.responseDto.ErrorMessages = new List<string>() { error.Message };
+
+            }
+            return this.responseDto;
+        }
+
+        [HttpPost("Checkout")]
+        public async Task<object> Checkout(CheckoutHeaderDto checkoutHeaderDto)
+        {
+            try
+            {
+                CartDto cartDto = await this.cartRepository.GetByUserId(checkoutHeaderDto.UserId);
+
+                if(cartDto == null)
+                {
+                    return BadRequest();
+                }
+
+                checkoutHeaderDto.CartDetails = cartDto.CartDetails;
+
+                // Logic to add message for Service Bus to process the order.
+                await this.messageBus.PublishMessage(checkoutHeaderDto, "checkoutmessagetopic");
+                //this.responseDto.Result = result;
             }
             catch (Exception error)
             {

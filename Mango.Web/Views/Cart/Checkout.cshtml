@@ -4,12 +4,12 @@
 @if (Model != null && Model.CartDetails.Any())
 {
 
-    <input asp-for="CartHeader.UserId" hidden />
-    <input asp-for="CartHeader.CouponCode" hidden />
-    <input asp-for="CartHeader.DiscountTotal" hidden />
-    <input asp-for="CartHeader.OrderTotal" hidden />
 
     <form method="post">
+        <input asp-for="CartHeader.UserId" hidden />
+        <input asp-for="CartHeader.CouponCode" hidden />
+        <input asp-for="CartHeader.DiscountTotal" hidden />
+        <input asp-for="CartHeader.OrderTotal" hidden />
         <div>
             <span style="font-size:25px;" class="text-warning">Enter details and place order :</span>
             <br />
