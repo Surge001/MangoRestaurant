@@ -1,5 +1,7 @@
 using AutoMapper;
 using Mango.Services.OrderApi.DbContexts;
+using Mango.Services.OrderApi.Extensions;
+using Mango.Services.OrderApi.Messaging;
 using Mango.Services.OrderApi.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +24,9 @@ optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCo
 builder.Services.AddSingleton(new OrderRepository(optionsBuilder.Options));
 
 
-//builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -102,4 +106,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseAzureServiceBusConsumer();
 app.Run();
