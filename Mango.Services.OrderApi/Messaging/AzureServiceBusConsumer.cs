@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Mango.MessageBus;
 using Mango.Services.OrderApi.Messages;
 using Mango.Services.OrderApi.Models;
 using Mango.Services.OrderApi.Repository;
@@ -11,21 +12,22 @@ namespace Mango.Services.OrderApi.Messaging
     {
         private readonly OrderRepository repository;
         private readonly IConfiguration configuration;
-
+        private readonly IMessageBus messageBus;
         private readonly string serviceBusConnectionString;
         private readonly string subscriptionName;
         private readonly string messageTopic;
-
+        private readonly string orderPaymentProcessTopic;
         private ServiceBusProcessor checkoutProcessor;
 
-        public AzureServiceBusConsumer(OrderRepository repository, IConfiguration configuration)
+        public AzureServiceBusConsumer(OrderRepository repository, IConfiguration configuration, IMessageBus messageBus)
         {
             this.repository = repository;
             this.configuration = configuration;
-
+            this.messageBus = messageBus;
             this.serviceBusConnectionString = configuration.GetValue<string>("ServiceBusConnectionString");
             this.subscriptionName = configuration.GetValue<string>("SubscriptionName");
             this.messageTopic = configuration.GetValue<string>("CheckoutMessageTopicName");
+            this.orderPaymentProcessTopic = configuration.GetValue<string>("OrderPaymentProcessTopic");
 
             // -(1) -- Create Service Bus Client to listen to messages:
             var client = new ServiceBusClient(this.serviceBusConnectionString);
@@ -95,6 +97,27 @@ namespace Mango.Services.OrderApi.Messaging
                 order.OrderDetails.Add(details);
             }
             await this.repository.AddOrder(order);
+
+            // Now that we saved data into the database, send a message to SB for others to handle async:
+            PaymentRequestMessage sbRequestMessage = new()
+            {
+                Name = order.FirstName + " " + order.LastName,
+                CardNumber = headerDto.CardNumber,
+                CVV = order.CVV,
+                ExpiryMonthYear = order.ExpiryMonthYear,
+                OrderId = order.OrderHeaderId,
+                OrderTotal = order.OrderTotal
+            };
+            try
+            {
+                await messageBus.PublishMessage(sbRequestMessage, this.orderPaymentProcessTopic);
+                await args.CompleteMessageAsync(args.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
         }
 
         public Task ErrorHandler(ProcessErrorEventArgs args)
