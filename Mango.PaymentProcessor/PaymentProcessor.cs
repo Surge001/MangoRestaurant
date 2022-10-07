@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mango.PaymentProcessor.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Mango.PaymentProcessor
 {
-    internal class PaymentProcessor : IPaymentProcessor
+    public class PaymentProcessor : IPaymentProcessor
     {
-        public bool ProcessPayment()
+        public bool ProcessPayment(PaymentDto dto)
         {
-            // ToDo: implement payment logic then return true;
+            // ToDo: implement payment logic which charges passed-in credit card and returns
+            // true if paid successfully, or false if failed:
             return true;
         }
     }
