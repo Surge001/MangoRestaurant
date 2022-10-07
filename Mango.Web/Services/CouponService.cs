@@ -18,7 +18,7 @@ namespace Mango.Web.Services
                 AccessToken = token,
                 ApiType = SD.ApiType.GET,
                 Data = couponCode,
-                ApiUrl = SD.CouponApiBase + "/api/coupon?couponCode=" + couponCode
+                ApiUrl = SD.CouponApiBase + $"/api/coupon/{couponCode}"
             });
         }
     }
