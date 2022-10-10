@@ -83,7 +83,8 @@ namespace Mango.Services.PaymentApi.Messaging
                         UpdatePaymentResultMessage result = new()
                         {
                             Status = isPaid,
-                            OrderId = dto.OrderId
+                            OrderId = dto.OrderId,
+                            Email = sbMessage.Email
                         };
 
                     await this.messageBus.PublishMessage(result, this.orderUpdatePaymentResultTopic);

@@ -173,7 +173,7 @@ namespace Mango.Services.ShoppingCartApi.Controllers
 
                 // Logic to add message for Service Bus to process the order.
                 await this.messageBus.PublishMessage(checkoutHeaderDto, "checkoutmessagetopic");
-                //this.responseDto.Result = result;
+                //await this.cartRepository.ClearCart(checkoutHeaderDto.UserId);
             }
             catch (Exception error)
             {
