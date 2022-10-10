@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Mango.Services.PaymentApi.Messaging
 {
+    ///<inheritdoc cref="IAzureServiceBusConsumer"/>
     public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     {
         private readonly IConfiguration configuration;
@@ -16,6 +17,7 @@ namespace Mango.Services.PaymentApi.Messaging
         private readonly string serviceBusConnectionString;
         private readonly string subscriptionName;
         private readonly string orderPaymentProcessTopic;
+        private readonly string orderUpdatePaymentResultTopic;
         private ServiceBusProcessor sbProcessor;
 
         public AzureServiceBusConsumer(IConfiguration configuration, IMessageBus messageBus, IPaymentProcessor paymentProcessor)
@@ -26,6 +28,8 @@ namespace Mango.Services.PaymentApi.Messaging
             this.serviceBusConnectionString = configuration.GetValue<string>("ServiceBusConnectionString");
             this.orderPaymentProcessTopic = configuration.GetValue<string>("OrderPaymentProcessTopic");
             this.subscriptionName = configuration.GetValue<string>("SubscriptionName");
+            this.orderUpdatePaymentResultTopic = configuration.GetValue<string>("OrderUpdatePaymentResultTopic");
+
 
             // -(1) -- Create Service Bus Client to listen to messages:
             var client = new ServiceBusClient(this.serviceBusConnectionString);
@@ -74,15 +78,16 @@ namespace Mango.Services.PaymentApi.Messaging
                     };
                     bool isPaid = this.paymentProcessor.ProcessPayment(dto); // <= This is where credit card is charged and payment is done;
 
-                    if (isPaid)
-                    {
                         // (3) -- Now since credit card is successfully charged, raise another event with SB under different
                         //     -- topic and have differenct subscriptions handle it by whoever needs to know that payment is completed.
-                    }
-                    else
-                    {
-                        //Todo: handle unsuccessful payment whichever way you wish;
-                    }
+                        UpdatePaymentResultMessage result = new()
+                        {
+                            Status = isPaid,
+                            OrderId = dto.OrderId
+                        };
+
+                    await this.messageBus.PublishMessage(result, this.orderUpdatePaymentResultTopic);
+                    await args.CompleteMessageAsync(args.Message);
                 }
             }
             catch(Exception error)
