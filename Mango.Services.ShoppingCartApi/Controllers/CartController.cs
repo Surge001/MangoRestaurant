@@ -1,6 +1,7 @@
 ﻿using Mango.MessageBus;
 using Mango.Services.ShoppingCartApi.Messages;
 using Mango.Services.ShoppingCartApi.Model.Dto;
+using Mango.Services.ShoppingCartApi.RabbitMq;
 using Mango.Services.ShoppingCartApi.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,6 +20,7 @@ namespace Mango.Services.ShoppingCartApi.Controllers
         private readonly ICartRepository cartRepository;
         private readonly IMessageBus messageBus;
         private readonly ICouponRepository couponRepository;
+        private readonly IRabbitCartMessageSender rabbitSender;
         protected ResponseDto responseDto;
 
         #endregion
@@ -30,11 +32,16 @@ namespace Mango.Services.ShoppingCartApi.Controllers
         /// </summary>
         /// <param name="cartRepository">Repository instance</param>
         /// <param name="messageBus">Message Bus instance</param>
-        public CartController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository)
+        public CartController(
+            ICartRepository cartRepository, 
+            IMessageBus messageBus, 
+            ICouponRepository couponRepository,
+            IRabbitCartMessageSender rabbitSender)
         {
             this.cartRepository = cartRepository;
             this.messageBus = messageBus;
             this.couponRepository = couponRepository;
+            this.rabbitSender = rabbitSender;
             this.responseDto = new();
         }
 
@@ -173,7 +180,11 @@ namespace Mango.Services.ShoppingCartApi.Controllers
 
                 // Logic to add message for Service Bus to process the order.
                 await this.messageBus.PublishMessage(checkoutHeaderDto, "checkoutmessagetopic");
-                //await this.cartRepository.ClearCart(checkoutHeaderDto.UserId);
+
+                // Alternatively, we may use RabbitMQ for processing the order instead of Azure Bus:
+               // this.rabbitSender.SendMessage(checkoutHeaderDto, "checkoutmessagetopic");
+
+                //await this.cartRepository.ClearCart(checkoutHeaderDto.UserId); //<- this is not working right;
             }
             catch (Exception error)
             {

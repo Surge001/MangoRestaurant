@@ -3,6 +3,7 @@ using Mango.MessageBus;
 using Mango.Services.OrderApi.DbContexts;
 using Mango.Services.OrderApi.Extensions;
 using Mango.Services.OrderApi.Messaging;
+using Mango.Services.OrderApi.RabbitMq;
 using Mango.Services.OrderApi.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,9 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<IRabbitOrderMessageSender>(x => new RabbitOrderMessageSender("localhost", "guest", "guest"));
+// This mapped class will be initialized and started immediately on app start:
+builder.Services.AddHostedService<RabbitMqConsumer>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

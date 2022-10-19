@@ -12,8 +12,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Mango.Services.ShoppingCartApi;
 using Mango.Services.ShoppingCartApi.Repository;
 using Mango.MessageBus;
+using Mango.Services.ShoppingCartApi.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// RabbitMQ artefacts (optional) =======================================
+
+builder.Services.AddScoped<IRabbitCartMessageSender>(x => new RabbitCartMessageSender("localhost", "guest", "guest"));
+
+// =====================================================================
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
