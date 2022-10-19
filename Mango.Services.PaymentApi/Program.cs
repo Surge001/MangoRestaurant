@@ -1,9 +1,13 @@
 using Mango.MessageBus;
 using Mango.PaymentProcessor;
+using Mango.Services.OrderApi.RabbitMq;
 using Mango.Services.PaymentApi.Extensions;
 using Mango.Services.PaymentApi.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<IRabbitPaymentMessageSender>(x => new RabbitPaymentMessageSender("localhost", "guest", "guest"));
+builder.Services.AddHostedService<RabbitMqConsumer>();
 
 builder.Services.AddSingleton<IPaymentProcessor, PaymentProcessor>();
 
